@@ -6,23 +6,48 @@ var Sticky = {
 		var $scrollTop = $(window).scrollTop();
 		for(var i=0; i<Sticky.elements.length; i++) {
 			var instance = Sticky.elements[i];
-			if($scrollTop > instance.top - instance.offset) {
-				instance.element.css('position', 'fixed').css('top', instance.offset);
+			if($scrollTop > instance.top - instance.settings.offset) {
+				if(instance.status === 'docked') {
+					instance.element.css('position', 'fixed').css('top', instance.settings.offset);
+					instance.status = 'sticky';
+					if(typeof(instance.settings.sticky) === 'function') {
+						instance.settings.sticky.call(instance.element);
+					}
+				}
+			} else {
+				if(instance.status === 'sticky') {
+					instance.element.css('position', instance.css.position).css('top', instance.css.top);
+					instance.status = 'docked';
+					if(typeof(instance.settings.docked) === 'function') {
+						instance.settings.docked.call(instance.element);
+					}
+				}
 			}
 		}
 	}
 };
 
 (function($){
-	$.fn.sticky = function(offset) {
+	$.fn.sticky = function(options) {
+		var settings = $.extend({
+			offset: 0,		// Amount to offset from the top.
+			sticky: null,	// Function called when element sticks.
+			docked: null	// Function called when element docks (Resumes static position).
+		}, options);
+		
 		return this.each(function(){
 			var stickyObject = {
 				element: $(this),
 				top: $(this).offset().top,
-				offset: (offset) ? offset : 0
+				settings: settings,
+				status: 'docked',
+				css: {
+					position: $(this).css('position'),
+					top: $(this).css('top')
+				}
 			};
 			Sticky.elements.push(stickyObject);
-			var $container = $("<div/>").addClass("stickyContainer").css("height", $(this).height());
+			var $container = $("<div/>").addClass("stickyContainer").css("height", $(this).outerHeight());
 			$(this).wrap($container);
 			Sticky.scrolling();
 		});
@@ -33,5 +58,4 @@ var Sticky = {
 	} else if(window.attachEvent) {
 		window.attachEvent('scroll', Sticky.scrolling);
 	}
-	
 })(jQuery);
