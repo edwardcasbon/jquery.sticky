@@ -56,6 +56,6 @@ var Sticky = {
 	if(window.addEventListener) {
 		window.addEventListener('scroll', Sticky.scrolling);
 	} else if(window.attachEvent) {
-		window.attachEvent('scroll', Sticky.scrolling);
+		window.attachEvent('onscroll', Sticky.scrolling);
 	}
 })(jQuery);
