@@ -47,7 +47,7 @@ var Sticky = {
 				}
 			};
 			Sticky.elements.push(stickyObject);
-			var $container = $("<div/>").addClass("stickyContainer").css("height", $(this).outerHeight());
+			var $container = $("<div/>").addClass("stickyContainer").css("height", $(this).outerHeight()).css("float", "left").css("width", "100%");
 			$(this).wrap($container);
 			Sticky.scrolling();
 		});
