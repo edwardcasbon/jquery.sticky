@@ -1,4 +1,4 @@
-var Sticky = (function() {
+var Sticky = (function($) {
 
 	var elements = [];
 
@@ -86,7 +86,7 @@ var Sticky = (function() {
 		elements: elements,
 		scrolling: scrolling
 	};
-})();
+})(jQuery);
 
 (function($) {
 	$.fn.sticky = function(options) {
