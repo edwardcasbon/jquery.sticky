@@ -32,34 +32,38 @@ var Sticky = (function($) {
 			for(var j = 0; j < instance.nav.elements.length; j++) {
 				var navItem = instance.nav.elements[j];
 				var $content = $(navItem.hash);
+				
+				// Check to see if the local content exists.
+				if($content.length > 0) {
 
-				var contentTop = parseInt($content.position().top);
-				var contentBottom = contentTop + $content.outerHeight(true);
+					var contentTop = parseInt($content.position().top);
+					var contentBottom = contentTop + $content.outerHeight(true);
 
-				if(instance.nav.status == navItem) {
-					if( ($scrollTop < contentTop) || ($scrollTop > contentBottom) ) {
+					if(instance.nav.status == navItem) {
+						if( ($scrollTop < contentTop) || ($scrollTop > contentBottom) ) {
 
-						// Out.
+							// Out.
+							href = ((navItem.pathname.charAt(0)==='/') ? navItem.pathname : '/' + navItem.pathname) + navItem.hash;
+							instance.element.find('a[href=\"' + href + '\"]').removeClass(instance.nav.activeClass);
+							instance.nav.status = false;
+						}
+					}
+
+					// In?
+					if( ($scrollTop >= contentTop) && ($scrollTop < contentBottom) && (instance.nav.status !== navItem) ) {
+
+						if(instance.nav.status !== false) {
+
+							// Out.
+							href = ((instance.nav.status.pathname.charAt(0)==='/') ? instance.nav.status.pathname : '/' + instance.nav.status.pathname) + instance.nav.status.hash;
+							instance.element.find('a[href=\"' + href + '\"]').removeClass(instance.nav.activeClass);
+						}
+
+						// In.
+						instance.nav.status = navItem;
 						href = ((navItem.pathname.charAt(0)==='/') ? navItem.pathname : '/' + navItem.pathname) + navItem.hash;
-						instance.element.find('a[href=\"' + href + '\"]').removeClass(instance.nav.activeClass);
-						instance.nav.status = false;
+						instance.element.find('a[href=\"' + href + '\"]').addClass(instance.nav.activeClass);
 					}
-				}
-
-				// In?
-				if( ($scrollTop >= contentTop) && ($scrollTop < contentBottom) && (instance.nav.status !== navItem) ) {
-
-					if(instance.nav.status !== false) {
-
-						// Out.
-						href = ((instance.nav.status.pathname.charAt(0)==='/') ? instance.nav.status.pathname : '/' + instance.nav.status.pathname) + instance.nav.status.hash;
-						instance.element.find('a[href=\"' + href + '\"]').removeClass(instance.nav.activeClass);
-					}
-
-					// In.
-					instance.nav.status = navItem;
-					href = ((navItem.pathname.charAt(0)==='/') ? navItem.pathname : '/' + navItem.pathname) + navItem.hash;
-					instance.element.find('a[href=\"' + href + '\"]').addClass(instance.nav.activeClass);
 				}
 			}
 		}
