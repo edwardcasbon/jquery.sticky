@@ -104,7 +104,11 @@ var Sticky = (function($) {
 			sticky: null,
 
 			// Function called when element docks (Resumes static position).
-			docked: null
+			docked: null,
+
+			// Class name for when hovering over internal elements.
+			navActiveClass: 'sticky-hover-active'
+
 		}, options);
 
 		return this.each(function(){
@@ -123,7 +127,7 @@ var Sticky = (function($) {
 					// Internal nav elements.
 					elements: [],
 					status: false,
-					activeClass: 'sticky-hover-active'
+					activeClass: settings.navActiveClass
 				}
 			};
 
