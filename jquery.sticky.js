@@ -32,11 +32,12 @@ var Sticky = (function($) {
 			for(var j = 0; j < instance.nav.elements.length; j++) {
 				var navItem = instance.nav.elements[j];
 				var $content = $(navItem.hash);
-				
+
 				// Check to see if the local content exists.
 				if($content.length > 0) {
 
-					var contentTop = parseInt($content.position().top);
+					var scrollOffset = 0 - instance.element.outerHeight();
+					var contentTop = parseInt($content.position().top) + scrollOffset;
 					var contentBottom = contentTop + $content.outerHeight(true);
 
 					if(instance.nav.status == navItem) {
