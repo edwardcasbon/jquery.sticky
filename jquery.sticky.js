@@ -2,6 +2,22 @@ var Sticky = (function($) {
 
 	var elements = [];
 
+	var setSticky = function setSticky(instance) {
+		instance.element.css('position', 'fixed').css('top', offset);
+		instance.status = 'sticky';
+		if(typeof(instance.settings.sticky) === 'function') {
+			instance.settings.sticky.call(instance.element);
+		}
+	};
+
+	var unsetSticky = function unsetSticky(instance) {
+		instance.element.css('position', instance.css.position).css('top', instance.css.top);
+		instance.status = 'docked';
+		if(typeof(instance.settings.docked) === 'function') {
+			instance.settings.docked.call(instance.element);
+		}
+	};
+
 	var scrolling = function scrolling() {
 		var $scrollTop = $(window).scrollTop();
 		for(var i = 0; i < elements.length; i++) {
@@ -12,19 +28,11 @@ var Sticky = (function($) {
 
 			if($scrollTop > containerTop - offset) {
 				if(instance.status === 'docked') {
-					instance.element.css('position', 'fixed').css('top', offset);
-					instance.status = 'sticky';
-					if(typeof(instance.settings.sticky) === 'function') {
-						instance.settings.sticky.call(instance.element);
-					}
+					setSticky(instance);
 				}
 			} else {
 				if(instance.status === 'sticky') {
-					instance.element.css('position', instance.css.position).css('top', instance.css.top);
-					instance.status = 'docked';
-					if(typeof(instance.settings.docked) === 'function') {
-						instance.settings.docked.call(instance.element);
-					}
+					unsetSticky(instance);
 				}
 			}
 
