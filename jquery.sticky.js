@@ -3,7 +3,8 @@ var Sticky = (function($) {
 	var elements = [];
 
 	var setSticky = function setSticky(instance, offset) {
-		instance.element.css('position', 'fixed').css('top', offset);
+		var containerWidth = instance.container.width();
+		instance.element.css('position', 'fixed').css('top', offset).css('width', containerWidth);
 		instance.status = 'sticky';
 		if(typeof(instance.settings.sticky) === 'function') {
 			instance.settings.sticky.call(instance.element);
@@ -11,7 +12,7 @@ var Sticky = (function($) {
 	};
 
 	var unsetSticky = function unsetSticky(instance) {
-		instance.element.css('position', instance.css.position).css('top', instance.css.top);
+		instance.element.css('position', instance.css.position).css('top', instance.css.top).css('width', 'auto');
 		instance.status = 'docked';
 		if(typeof(instance.settings.docked) === 'function') {
 			instance.settings.docked.call(instance.element);
