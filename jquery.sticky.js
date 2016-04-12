@@ -19,12 +19,12 @@ var Sticky = (function($) {
 	};
 
 
-	var scrolling = function scrolling() {
+	var scrolling = function scrolling(trigger) {
 		var $scrollTop = $(window).scrollTop();
 		for(var i = 0; i < elements.length; i++) {
 			var instance = elements[i];
 			var containerTop = instance.container.position().top;
-			var containerHeight = instance.container.outerHeight(true);
+			var containerHeight;
 			var offset = getOffset(instance);
 			var href;
 			var $parent;
@@ -37,7 +37,7 @@ var Sticky = (function($) {
 						setSticky(instance, offset);
 					}
 				} else {
-					if (instance.status === 'sticky') {
+					if(instance.status === 'sticky') {
 						unsetSticky(instance);
 					}
 				}
@@ -53,19 +53,19 @@ var Sticky = (function($) {
 							}
 						// Else set sticky inside the parent
 						} else {
-							if (instance.status === 'docked') {
+							if(instance.status === 'docked') {
 								setSticky(instance, offset);
 							}
 						}
 					} else {
 						// If we're scrolling back up the page, reset sticky while we're inside the parent
 						if($scrollTop > parentTop) {
-							if (instance.status === 'docked') {
+							if(instance.status === 'docked') {
 								setSticky(instance, offset);
 							}
 						// Undock when we hit the top of the parent again
 						} else {
-							if (instance.status === 'sticky') {
+							if(instance.status === 'sticky') {
 								unsetSticky(instance);
 							}
 						}
@@ -74,10 +74,14 @@ var Sticky = (function($) {
 			};
 
 			// if the sticky element names a parent to stick to, stick inside the parent; else use simple sticking
-			if (instance.parent !== undefined) {
-				$parent = $(instance.element).parents(instance.parent);
-				parentTop = $parent.offset().top;
-				parentBottom = parentTop + $parent.outerHeight(true);
+			if(instance.parent !== undefined) {
+				// calculate heights on first run, or recalculate if browser has resized
+				if($parent === undefined || trigger === 'resize') {
+					$parent = $(instance.element).parents(instance.parent);
+					parentTop = $parent.offset().top;
+					parentBottom = parentTop + $parent.outerHeight(true);
+					containerHeight = instance.container.outerHeight(true);
+				}
 				scrollInParent();
 			} else {
 				simpleScroll();
@@ -220,5 +224,6 @@ var Sticky = (function($) {
 		});
 	};
 
-	$(window).on('scroll resize', Sticky.scrolling);
+	$(window).on('scroll', Sticky.scrolling('scroll'));
+	$(window).on('resize', Sticky.scrolling('resize'));
 })(jQuery);
