@@ -19,7 +19,7 @@ var Sticky = (function($) {
 	};
 
 
-	var scrolling = function scrolling(trigger) {
+	var scrolling = function scrolling(event) {
 		var $scrollTop = $(window).scrollTop();
 		for(var i = 0; i < elements.length; i++) {
 			var instance = elements[i];
@@ -76,7 +76,7 @@ var Sticky = (function($) {
 			// if the sticky element names a parent to stick to, stick inside the parent; else use simple sticking
 			if(instance.parent !== undefined) {
 				// calculate heights on first run, or recalculate if browser has resized
-				if($parent === undefined || trigger === 'resize') {
+				if($parent === undefined || event.type === 'resize') {
 					$parent = $(instance.element).parents(instance.parent);
 					parentTop = $parent.offset().top;
 					parentBottom = parentTop + $parent.outerHeight(true);
@@ -224,6 +224,5 @@ var Sticky = (function($) {
 		});
 	};
 
-	$(window).on('scroll', Sticky.scrolling('scroll'));
-	$(window).on('resize', Sticky.scrolling('resize'));
+	$(window).on('scroll resize', Sticky.scrolling);
 })(jQuery);
