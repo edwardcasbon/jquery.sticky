@@ -149,7 +149,7 @@ var Sticky = (function($) {
 
 	return {
 		elements: elements,
-		scrolling: scrolling,
+		scrolling: scrolling
 	};
 })(jQuery);
 
