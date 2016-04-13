@@ -48,7 +48,7 @@ var Sticky = (function($) {
 				if($scrollTop > containerTop - offset) {
 					if($scrollTop > parentTop) {
 						// Unset sticky if we've hit the bottom of the parent
-						if($scrollTop > parentBottom - containerHeight - 250) { // 250 is a magic number I don't understand
+						if($scrollTop > parentBottom - containerHeight - 350) { // 250 is a magic number I don't understand
 							if (instance.status === 'sticky') {
 								unsetSticky(instance);
 							}
