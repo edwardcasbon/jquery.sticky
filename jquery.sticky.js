@@ -2,30 +2,90 @@ var Sticky = (function($) {
 
 	var elements = [];
 
-	var scrolling = function scrolling() {
+	var setSticky = function setSticky(instance, offset) {
+		var containerWidth = instance.container.width();
+		instance.element.css('position', 'fixed').css('top', offset).css('width', containerWidth);
+		instance.status = 'sticky';
+		if(typeof(instance.settings.sticky) === 'function') {
+			instance.settings.sticky.call(instance.element);
+		}
+	};
+
+	var unsetSticky = function unsetSticky(instance) {
+		instance.element.css('position', instance.css.position).css('top', instance.css.top).css('width', 'auto');
+		instance.status = 'docked';
+		if(typeof(instance.settings.docked) === 'function') {
+			instance.settings.docked.call(instance.element);
+		}
+	};
+
+
+	var scrolling = function scrolling(event) {
 		var $scrollTop = $(window).scrollTop();
 		for(var i = 0; i < elements.length; i++) {
 			var instance = elements[i];
 			var containerTop = instance.container.position().top;
+			var containerHeight;
 			var offset = getOffset(instance);
 			var href;
+			var $parent;
+			var parentTop;
+			var parentBottom;
 
-			if($scrollTop > containerTop - offset) {
-				if(instance.status === 'docked') {
-					instance.element.css('position', 'fixed').css('top', offset);
-					instance.status = 'sticky';
-					if(typeof(instance.settings.sticky) === 'function') {
-						instance.settings.sticky.call(instance.element);
+			var simpleScroll = function simpleScroll() {
+				if($scrollTop > containerTop - offset) {
+					if (instance.status === 'docked') {
+						setSticky(instance, offset);
+					}
+				} else {
+					if(instance.status === 'sticky') {
+						unsetSticky(instance);
 					}
 				}
+			};
+
+			var scrollInParent = function scrollInParent() {
+				if($scrollTop > containerTop - offset) {
+					if($scrollTop > parentTop) {
+						// Unset sticky if we've hit the bottom of the parent
+						if($scrollTop > parentBottom - containerHeight - 250) { // 250 is a magic number I don't understand
+							if (instance.status === 'sticky') {
+								unsetSticky(instance);
+							}
+						// Else set sticky inside the parent
+						} else {
+							if(instance.status === 'docked') {
+								setSticky(instance, offset);
+							}
+						}
+					} else {
+						// If we're scrolling back up the page, reset sticky while we're inside the parent
+						if($scrollTop > parentTop) {
+							if(instance.status === 'docked') {
+								setSticky(instance, offset);
+							}
+						// Undock when we hit the top of the parent again
+						} else {
+							if(instance.status === 'sticky') {
+								unsetSticky(instance);
+							}
+						}
+					}
+				}
+			};
+
+			// if the sticky element names a parent to stick to, stick inside the parent; else use simple sticking
+			if(instance.parent !== undefined) {
+				// calculate heights on first run, or recalculate if browser has resized
+				if($parent === undefined || event.type === 'resize') {
+					$parent = $(instance.element).parents(instance.parent);
+					parentTop = $parent.offset().top;
+					parentBottom = parentTop + $parent.outerHeight(true);
+					containerHeight = instance.container.outerHeight(true);
+				}
+				scrollInParent();
 			} else {
-				if(instance.status === 'sticky') {
-					instance.element.css('position', instance.css.position).css('top', instance.css.top);
-					instance.status = 'docked';
-					if(typeof(instance.settings.docked) === 'function') {
-						instance.settings.docked.call(instance.element);
-					}
-				}
+				simpleScroll();
 			}
 
 			// Check if hovering over internal element.
@@ -119,6 +179,7 @@ var Sticky = (function($) {
 				top: $this.offset().top,
 				settings: settings,
 				status: 'docked',
+				parent: $this.attr('data-stick-to-parent'),
 				css: {
 					position: $this.css('position'),
 					top: $this.css('top')
@@ -164,5 +225,5 @@ var Sticky = (function($) {
 		});
 	};
 
-	$(window).on('scroll', Sticky.scrolling);
+	$(window).on('scroll resize', Sticky.scrolling);
 })(jQuery);
