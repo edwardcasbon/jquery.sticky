@@ -27,6 +27,7 @@ var Sticky = (function($) {
 			var containerTop = instance.container.position().top;
 			var containerHeight;
 			var offset = getOffset(instance);
+			var collisionPoint;
 			var href;
 			var $parent;
 			var parentTop;
@@ -45,10 +46,11 @@ var Sticky = (function($) {
 			};
 
 			var scrollInParent = function scrollInParent() {
+				collisionPoint = parentBottom - containerHeight - offset;
 				if($scrollTop > containerTop - offset) {
 					if($scrollTop > parentTop) {
 						// Unset sticky if we've hit the bottom of the parent
-						if($scrollTop > parentBottom - containerHeight - 250) { // 250 is a magic number I don't understand
+						if($scrollTop > collisionPoint) {
 							if (instance.status === 'sticky') {
 								unsetSticky(instance);
 							}
@@ -82,6 +84,7 @@ var Sticky = (function($) {
 					parentTop = $parent.offset().top;
 					parentBottom = parentTop + $parent.outerHeight(true);
 					containerHeight = instance.container.outerHeight(true);
+					instance.container.css('height', instance.element.outerHeight());
 				}
 				scrollInParent();
 			} else {
@@ -220,7 +223,7 @@ var Sticky = (function($) {
 			});
 
 			Sticky.elements.push(stickyObject);
-			Sticky.scrolling();
+			$(window).on('load', Sticky.scrolling);
 
 		});
 	};
