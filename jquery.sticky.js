@@ -155,14 +155,9 @@ var Sticky = (function($) {
 		}
 	};
 
-	var resize = function resize() {
-
-	};
-
 	return {
 		elements: elements,
-		scrolling: scrolling,
-		resize: resize
+		scrolling: scrolling
 	};
 })(jQuery);
 
