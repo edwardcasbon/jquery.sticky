@@ -91,6 +91,11 @@ var Sticky = (function($) {
 				simpleScroll();
 			}
 
+			// reevaluate width if browser has resized
+			if (event.type === 'resize') {
+				instance.element.css('width', instance.container.width());
+			}
+
 			// Check if hovering over internal element.
 			for(var j = 0; j < instance.nav.elements.length; j++) {
 				var navItem = instance.nav.elements[j];
@@ -150,9 +155,14 @@ var Sticky = (function($) {
 		}
 	};
 
+	var resize = function resize() {
+
+	};
+
 	return {
 		elements: elements,
-		scrolling: scrolling
+		scrolling: scrolling,
+		resize: resize
 	};
 })(jQuery);
 
