@@ -74,7 +74,16 @@ var Sticky = (function($) {
 						}
 					}
 				}
-			};
+            };
+
+            var updateContainerHeight = (function updateContainerHeight() {
+                var containerHeight = instance.container.css('height'); // 'Xpx'
+                var elementHeight = instance.element.outerHeight() + 'px'; // X
+
+                if (containerHeight != elementHeight) {
+                    instance.container.css('height', elementHeight);
+                }
+            })();
 
 			// if the sticky element names a parent to stick to, stick inside the parent; else use simple sticking
 			if(instance.parent !== undefined) {
